@@ -50,6 +50,9 @@ target_link_libraries(anisotropic_smoothing af_benchmark)
 add_executable(fft src/fft.cpp)
 target_link_libraries(fft af_benchmark)
 
+add_executable(pinverse src/pinverse.cpp)
+target_link_libraries(pinverse af_benchmark)
+
 
 add_executable(unified_af src/unified.cpp)
 add_executable(unified_cuda src/unified.cpp)
