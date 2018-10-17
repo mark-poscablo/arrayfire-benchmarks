@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 
 project(ArrayFire-Benchmarks VERSION 3.6)
 
+find_package(CUDA)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -25,6 +26,8 @@ set(BENCHMARK_ENABLE_ASSEMPLY_TEST OFF CACHE INTERNAL "")
 add_subdirectory(benchmark EXCLUDE_FROM_ALL)
 
 include_directories(src)
+
+find_cuda_helper_libs(cudnn)
 
 add_library(af_benchmark
   src/af_benchmark.cpp
@@ -50,9 +53,11 @@ target_link_libraries(pi af_benchmark)
 add_executable(af_conv_relu_pool src/af_conv_relu_pool.cpp)
 target_link_libraries(af_conv_relu_pool af_benchmark)
 
+if (CUDA_FOUND)
 add_executable(cudnn_conv_relu_pool src/cudnn_conv_relu_pool.cpp)
-target_include_directories(cudnn_conv_relu_pool PRIVATE /opt/cuda/include)
-target_link_libraries(cudnn_conv_relu_pool -L/opt/cuda/lib64 -lcudnn -lcudart af_benchmark)
+target_include_directories(cudnn_conv_relu_pool PRIVATE ${CUDA_INCLUDE_DIRS})
+target_link_libraries(cudnn_conv_relu_pool ${CUDA_cudnn_LIBRARY} ${CUDA_LIBRARIES} af_benchmark)
+endif (CUDA_FOUND)
 
 add_executable(anisotropic_smoothing src/anisotropic_smoothing.cpp)
 target_link_libraries(anisotropic_smoothing af_benchmark)
